@@ -1,6 +1,7 @@
 import logging
 import os  # noqa: E402
 import warnings
+from typing import Any, Optional  # noqa: E402
 
 # Third Party
 import numba as nb  # noqa: E402
@@ -10,7 +11,11 @@ import seaborn as sns  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
 
 
-def _get_logger() -> logging.LoggerAdapter:
+def _get_logger() -> Optional[logging.LoggerAdapter]:
+    existing_logger = locals().get("logger", None)
+    if existing_logger:
+        existing_logger.warning("trying to overwrite logger; skipping")
+        return
     app_logger = logging.getLogger(__name__)
     handler = logging.StreamHandler()
     handler.setLevel(logging.WARNING)
@@ -30,20 +35,22 @@ warnings.filterwarnings("ignore")
 
 try:
     # Third Party
-    from IPython import get_ipython
-
-    _ipy = get_ipython()
-    _ipy.run_line_magic("load_ext", "autoreload")
-    _ipy.run_line_magic("autoreload", "2")
-    del _ipy
-except Exception as e:
-    logger.warning(f"couldnt set up autoreload: {e}")
-
-
-try:
-    # Third Party
     from tqdm.notebook import tqdm, trange
 except Exception as e:
     logger.warning(f"not in a notebook; using the standard tqdm: {e}")
     # Third Party
     from tqdm import tqdm, trange
+
+
+try:
+    # Third Party
+    from IPython import get_ipython
+
+    _ipy = get_ipython()
+    _ipy.run_line_magic("load_ext", "watermark")
+    _ipy.run_line_magic("watermark", "-n -u -v -iv -w")
+    _ipy.run_line_magic("load_ext", "autoreload")
+    _ipy.run_line_magic("autoreload", "2")
+    del _ipy
+except Exception as e:
+    logger.warning(f"couldnt set up autoreload: {e}")
