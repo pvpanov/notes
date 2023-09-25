@@ -1,14 +1,16 @@
 import logging
 import os  # noqa: E402
+import warnings
 
 # Third Party
 import numba as nb  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+import seaborn as sns  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
 
 
-def _get_logger() -> logging.LoggingAdapter:
+def _get_logger() -> logging.LoggerAdapter:
     app_logger = logging.getLogger(__name__)
     handler = logging.StreamHandler()
     handler.setLevel(logging.WARNING)
@@ -23,6 +25,7 @@ def _get_logger() -> logging.LoggingAdapter:
 
 
 logger = _get_logger()
+warnings.filterwarnings("ignore")
 
 
 try:
