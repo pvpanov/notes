@@ -130,3 +130,5 @@ dmypy.json
 /docs/
 
 data/*
+*.ipynb
+/notes/notebooks/
