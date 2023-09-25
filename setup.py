@@ -9,9 +9,9 @@ https://github.com/pypa/sampleproject
 
 import pathlib
 
-from setuptools import find_packages, setup
-
+# Third Party
 import notes
+from setuptools import find_packages, setup
 
 here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")

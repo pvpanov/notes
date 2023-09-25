@@ -8,4 +8,5 @@ exclude =
     build,
     dist,
     venv,
-    .idea
+    .idea,
+    notes/notebooks/__init__.py
