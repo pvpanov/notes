@@ -11,6 +11,16 @@ import numpy.typing as npt  # noqa: E402
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
+from scipy.optimize import minimize  # noqa: E402
+
+
+def generic_plot(xlabel=None, ylabel=None, size=(10, 8)):
+    _, ax = plt.figure(figsize=size)
+    if xlabel:
+        ax.set_xlabel(xlabel)
+    if ylabel:
+        ax.set_ylabel(ylabel)
+    return ax
 
 
 def _get_logger() -> Optional[logging.LoggerAdapter]:
