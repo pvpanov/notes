@@ -6,6 +6,7 @@ from typing import Any, Optional  # noqa: E402
 # Third Party
 import numba as nb  # noqa: E402
 import numpy as np  # noqa: E402
+import numpy.typing as npt  # noqa: E402
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
 from matplotlib import pyplot as plt  # noqa: E402
