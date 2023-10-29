@@ -41,7 +41,7 @@ def _get_logger() -> Optional[logging.LoggerAdapter]:
         )
     )
     app_logger.addHandler(handler)
-    return logging.LoggerAdapter(app_logger)
+    return logging.LoggerAdapter(app_logger, extra=None)
 
 
 logger = _get_logger()
