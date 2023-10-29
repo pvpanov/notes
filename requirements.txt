@@ -1,3 +1,12 @@
 group-lasso
 asgl
 watermark
+async-lru
+statsmodels
+scikit-learn
+numpy
+numba
+isort
+black[jupyter]
+flake8
+pre-commit

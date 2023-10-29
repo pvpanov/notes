@@ -14,6 +14,7 @@ import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
 from matplotlib import pyplot as plt
 from scipy.optimize import minimize  # noqa: E402
+from statsmodels import api as sm  # noqa: E402
 
 
 def generic_plot(xlabel=None, ylabel=None, size=(10, 8)):
