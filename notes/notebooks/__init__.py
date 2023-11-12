@@ -1,3 +1,4 @@
+"""default imports"""
 import functools  # noqa: E402
 import importlib  # noqa: E402
 import itertools
@@ -18,6 +19,7 @@ from statsmodels import api as sm  # noqa: E402
 
 
 def generic_plot(xlabel=None, ylabel=None, size=(10, 8)):
+    """generic matplotlib util"""
     _, ax = plt.figure(figsize=size)
     if xlabel:
         ax.set_xlabel(xlabel)
@@ -30,7 +32,7 @@ def _get_logger() -> Optional[logging.LoggerAdapter]:
     existing_logger = locals().get("logger", None)
     if existing_logger:
         existing_logger.warning("trying to overwrite logger; skipping")
-        return
+        return None
     app_logger = logging.getLogger(__name__)
     handler = logging.StreamHandler()
     handler.setLevel(logging.WARNING)
@@ -51,7 +53,7 @@ warnings.filterwarnings("ignore")
 try:
     # Third Party
     from tqdm.notebook import tqdm, trange
-except Exception as e:
+except Exception as e:  # pylint: disable=broad-exception-caught
     logger.warning(f"not in a notebook; using the standard tqdm: {e}")
     # Third Party
     from tqdm import tqdm, trange
@@ -61,11 +63,11 @@ try:
     # Third Party
     from IPython import get_ipython
 
-    _ipy = get_ipython()
-    _ipy.run_line_magic("load_ext", "watermark")
-    _ipy.run_line_magic("watermark", "-n -u -v -iv -w")
-    _ipy.run_line_magic("load_ext", "autoreload")
-    _ipy.run_line_magic("autoreload", "2")
-    del _ipy
-except Exception as e:
+    _IPY = get_ipython()
+    _IPY.run_line_magic("load_ext", "watermark")
+    _IPY.run_line_magic("watermark", "-n -u -v -iv -w")
+    _IPY.run_line_magic("load_ext", "autoreload")
+    _IPY.run_line_magic("autoreload", "2")
+    del _IPY
+except Exception as e:  # pylint: disable=broad-exception-caught
     logger.warning(f"couldnt set up autoreload: {e}")
