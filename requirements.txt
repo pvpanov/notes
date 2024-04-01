@@ -11,3 +11,7 @@ black[jupyter]
 flake8
 pre-commit
 quantlib
+viztracer[full]
+tqdm
+jupyter
+ipython
