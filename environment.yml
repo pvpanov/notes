@@ -1,0 +1,33 @@
+name: notes_env
+channels:
+  - conda-forge
+  - anaconda
+  - plotly
+  - defaults
+dependencies:
+  - matplotlib
+  - numpy
+  - numba
+  - jupyter
+  - ipython
+  - jupyterlab
+  - pandas
+  - statsmodels
+  - plotly
+  - jupyter-dash
+  - scipy
+  - tqdm
+  - tensorflow
+  - cython
+  - seaborn
+  - scikit-learn
+  - pytz
+  - pytest
+  - pylint
+  - autopep8
+  - pip
+  - pillow
+  - ipywidgets
+  - h5py
+  - bs4
+  - mamba
