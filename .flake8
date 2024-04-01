@@ -1,0 +1,12 @@
+[flake8]
+ignore = W503, W504, E203
+max-line-length = 120
+max-complexity = 10
+exclude =
+    .git
+    __pycache__,
+    build,
+    dist,
+    venv,
+    .idea,
+    notes/notebooks/__init__.py
