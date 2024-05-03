@@ -15,3 +15,5 @@ viztracer[full]
 tqdm
 jupyter
 ipython
+matplotlib
+optimparallel

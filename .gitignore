@@ -130,3 +130,9 @@ dmypy.json
 /docs/
 
 data/*
+*.aux
+*.log
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.out

@@ -1,0 +1,54 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "isort",
+            "type": "shell",
+            "command": "isort",
+            "args": [
+                "notes/",
+                "tests/"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "black",
+            "type": "shell",
+            "command": "black",
+            "args": [
+                "notes/",
+                "tests/"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "flake8",
+            "type": "shell",
+            "command": "flake8",
+            "args": [
+                "notes/",
+                "tests/"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$flake8"
+            ]
+        },
+        {
+            "label": "Format and Lint",
+            "type": "shell",
+            "windows": {
+                "command": "isort notes/ tests/ & black notes/ tests/ & flake8 notes/ tests/"
+            },
+            "group": "build",
+            "problemMatcher": [
+                "$flake8"
+            ]
+        }
+    ]
+}
