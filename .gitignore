@@ -136,3 +136,6 @@ data/*
 *.fls
 *.synctex.gz
 *.out
+*.lyx
+*.lyx~
+.idea/
