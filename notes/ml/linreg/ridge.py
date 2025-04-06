@@ -10,13 +10,13 @@ from typing import Generator, Iterator, Optional
 
 # Third Party
 import numpy as np
-
 from matplotlib import pyplot as plt
 from sklearn.datasets import make_low_rank_matrix, make_regression
 from sklearn.linear_model import Ridge, RidgeCV
 from sklearn.metrics import make_scorer, mean_squared_error
 from sklearn.model_selection import cross_val_score
 from statsmodels import api as sm
+
 #%%
 X = np.random.randn(3, 2)
 w = np.random.randn(3)
