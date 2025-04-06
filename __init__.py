@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Document
-   here
+here
 """
 
 __author__ = "Petr Panov"

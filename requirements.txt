@@ -35,3 +35,4 @@ ipython
 tensorflow
 jax
 optax
+ruff
