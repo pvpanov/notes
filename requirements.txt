@@ -33,6 +33,7 @@ polars
 ydata_profiling
 ipython
 tensorflow
-jax
 optax
 ruff
+-f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+jax[cuda]
