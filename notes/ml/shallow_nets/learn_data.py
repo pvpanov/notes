@@ -112,19 +112,63 @@ class WideDeepTrainer:
         return wide_out + h2
 
     def loss_fn(self, params, batch):
-        x, y, w = batch
-        y_pred = self.model(params, x)
-        mse = jnp.sum(w[:, None] * (y_pred - y) ** 2) / jnp.sum(w)
-        reg_wide = self.lambda_wide_l2 * jnp.sum(
-            params["wide"]["W"] ** 2
-        ) + self.lambda_wide_l1 * jnp.sum(jnp.abs(params["wide"]["W"]))
-        reg_deep = self.lambda_deep_l2 * (
-            jnp.sum(params["deep"]["W1"] ** 2) + jnp.sum(params["deep"]["W2"] ** 2)
-        ) + self.lambda_deep_l1 * (
-            jnp.sum(jnp.abs(params["deep"]["W1"]))
-            + jnp.sum(jnp.abs(params["deep"]["W2"]))
-        )
-        return mse + reg_wide + reg_deep
+        # Unpack batch; if boundaries are provided, batch is a 4-tuple.
+        if len(batch) == 4:
+            x, y, w, boundaries = batch
+        else:
+            x, y, w = batch
+            boundaries = None
+
+        yhat = self.model(params, x)  # shape: (batch, num_groups)
+
+        # Compute a valid mask per row (only rows where all entries in y, yhat, and w are finite)
+        valid_mask = jnp.all(jnp.isfinite(yhat), axis=1) & jnp.all(jnp.isfinite(y), axis=1) & jnp.isfinite(w)
+        valid_mask_f = valid_mask.astype(yhat.dtype)
+
+        # --- Term 1: Negative PnL ---
+        # Compute weighted PnL only over valid rows.
+        w_exp = w[:, None]
+        pnl = jnp.sum(w_exp * (y * yhat) * valid_mask_f[:, None]) / jnp.sum(w * valid_mask_f)
+        loss1 = -pnl
+
+        # --- Term 2: Variance penalty ---
+        weighted_sum = jnp.sum(y * yhat, axis=1)
+        loss2 = self.gamma * (jnp.sum(w * (weighted_sum ** 2) * valid_mask_f) / jnp.sum(w * valid_mask_f))
+
+        # --- Term 3: Transaction cost penalty ---
+        # First, reshape yhat into (T, num_groups), where T = number of timestamps in the batch.
+        T_batch = yhat.shape[0] // self.num_groups
+        yhat_grouped = yhat.reshape((T_batch, self.num_groups))
+        
+        # Define a helper to compute transaction cost for a given block.
+        def compute_block_cost(block):
+            # block is shape (block_T, num_groups)
+            valid_block = jnp.all(jnp.isfinite(block), axis=1)
+            diff = jnp.abs(block[1:] - block[:-1])
+            valid_diff = valid_block[:-1] & valid_block[1:]
+            # For each group, sum only differences where both adjacent rows are valid.
+            return jnp.sum(self.c * jnp.sum(diff * valid_diff[:, None], axis=0))
+        
+        if boundaries is None:
+            # If no boundaries provided, compute transaction cost over the whole batch.
+            valid_mask_grouped = jnp.all(jnp.isfinite(yhat_grouped), axis=1)
+            diff = jnp.abs(yhat_grouped[1:] - yhat_grouped[:-1])
+            valid_diff = valid_mask_grouped[:-1] & valid_mask_grouped[1:]
+            loss3 = jnp.sum(self.c * jnp.sum(diff * valid_diff[:, None], axis=0))
+        else:
+            # boundaries is a 1D array of indices (length = num_blocks+1) that partition the batch
+            # into contiguous blocks (substrides). We compute transaction cost per block.
+            def block_cost(i, acc):
+                start = boundaries[i]
+                end = boundaries[i + 1]
+                block = yhat[start:end, :].reshape((-1, self.num_groups))
+                cost_block = compute_block_cost(block)
+                return acc + cost_block, None
+
+            num_blocks = boundaries.shape[0] - 1
+            loss3, _ = jax.lax.scan(block_cost, 0.0, jnp.arange(num_blocks))
+
+        return loss1 + loss2 + loss3
 
     @staticmethod
     @partial(jit, static_argnums=(3, 4))
