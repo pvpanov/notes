@@ -44,3 +44,32 @@ for _ in range(n_sim):
 import seaborn as sns
 
 sns.kdeplot(means)
+# %%
+import numpy as np
+from scipy.optimize import minimize
+from matplotlib import pyplot as plt
+
+# %%
+xh = np.r_[-1.0, 3, 2, 0]
+dxh = np.r_[3, 0, -1]
+
+
+def loss(x):
+    return np.sum((x - xh) ** 2) + np.sum((np.diff(x) - dxh) ** 2)
+
+
+# %%
+soln = minimize(loss, x0=xh).x
+# %%
+n = len(xh)
+h = (
+    2 * (2 * np.eye(n) + np.diag(np.r_[0, np.ones(n - 2), 0]))
+    - np.eye(n, k=1)
+    - np.eye(n, k=-1)
+)
+dx_dev = 2 * (np.diff(xh) - dxh)
+g = -np.append(dx_dev, 0) + np.append(0, dx_dev)
+plt.scatter(soln, xh - np.linalg.solve(h, g))
+# %%
+plt.plot(xh)
+plt.plot(soln)

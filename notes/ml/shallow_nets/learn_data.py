@@ -122,24 +122,32 @@ class WideDeepTrainer:
         yhat = self.model(params, x)  # shape: (batch, num_groups)
 
         # Compute a valid mask per row (only rows where all entries in y, yhat, and w are finite)
-        valid_mask = jnp.all(jnp.isfinite(yhat), axis=1) & jnp.all(jnp.isfinite(y), axis=1) & jnp.isfinite(w)
+        valid_mask = (
+            jnp.all(jnp.isfinite(yhat), axis=1)
+            & jnp.all(jnp.isfinite(y), axis=1)
+            & jnp.isfinite(w)
+        )
         valid_mask_f = valid_mask.astype(yhat.dtype)
 
         # --- Term 1: Negative PnL ---
         # Compute weighted PnL only over valid rows.
         w_exp = w[:, None]
-        pnl = jnp.sum(w_exp * (y * yhat) * valid_mask_f[:, None]) / jnp.sum(w * valid_mask_f)
+        pnl = jnp.sum(w_exp * (y * yhat) * valid_mask_f[:, None]) / jnp.sum(
+            w * valid_mask_f
+        )
         loss1 = -pnl
 
         # --- Term 2: Variance penalty ---
         weighted_sum = jnp.sum(y * yhat, axis=1)
-        loss2 = self.gamma * (jnp.sum(w * (weighted_sum ** 2) * valid_mask_f) / jnp.sum(w * valid_mask_f))
+        loss2 = self.gamma * (
+            jnp.sum(w * (weighted_sum**2) * valid_mask_f) / jnp.sum(w * valid_mask_f)
+        )
 
         # --- Term 3: Transaction cost penalty ---
         # First, reshape yhat into (T, num_groups), where T = number of timestamps in the batch.
         T_batch = yhat.shape[0] // self.num_groups
         yhat_grouped = yhat.reshape((T_batch, self.num_groups))
-        
+
         # Define a helper to compute transaction cost for a given block.
         def compute_block_cost(block):
             # block is shape (block_T, num_groups)
@@ -148,7 +156,7 @@ class WideDeepTrainer:
             valid_diff = valid_block[:-1] & valid_block[1:]
             # For each group, sum only differences where both adjacent rows are valid.
             return jnp.sum(self.c * jnp.sum(diff * valid_diff[:, None], axis=0))
-        
+
         if boundaries is None:
             # If no boundaries provided, compute transaction cost over the whole batch.
             valid_mask_grouped = jnp.all(jnp.isfinite(yhat_grouped), axis=1)

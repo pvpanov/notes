@@ -1,4 +1,17 @@
 {
-    "python.analysis.extraPaths": ["${workspaceFolder}"]
+    "python.analysis.extraPaths": [
+      "${workspaceFolder}"
+    ],
+    "cursorpyright.analysis.extraPaths": [
+      "${workspaceFolder}"
+    ],
+    "makefile.configureOnOpen": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.include": [
+        "notes/**"
+    ]
   }
   

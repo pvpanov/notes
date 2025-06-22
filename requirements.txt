@@ -9,7 +9,6 @@ numba
 seaborn
 pandas
 isort
-black[jupyter]
 flake8
 pre-commit
 quantlib
@@ -22,8 +21,7 @@ optimparallel
 lightgbm
 xgboost
 kaggle
-optuna
-optuna-dashboard
+hyperopt
 mlxtend
 mlens
 vecstack
@@ -35,5 +33,6 @@ ipython
 tensorflow
 optax
 ruff
--f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
-jax[cuda]
+pytest
+jax
+pandera
